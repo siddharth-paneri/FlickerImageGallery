@@ -36,9 +36,9 @@ https://jsonplaceholder.typicode.com/
 <img src = "https://github.com/siddharth-paneri/FlickerImageGallery/blob/master/Media/Architecture.jpg"/>
 
 ## Design patterns & programming concepts used
-1. MVVM (Model-View-View-Model)
-2. Protocol oriented programming
-3. Singleton patter
+1. MVVM
+2. Protocol-oriented programming
+3. Singleton pattern
 4. Dependency injection
 
 ## Features implemented
