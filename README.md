@@ -42,13 +42,13 @@ https://jsonplaceholder.typicode.com/
 4. Dependency injection
 
 ## Features implemented
-1. Fetch all the public photos from Flicker api
-2. Display all the public photos in a list/grid based on user preference
+1. Fetch all the public photos from Flicker api.
+2. Display all the public photos in a list/grid based on user preference.
 3. Allow user to perform sorting based on chronology for dates of photo published and photo taken.
 4. See the detail of each photo, able to see tags on that photo.
 5. Able to share the photo and link ot it via native content share option.
-6. Use can pull to refresh the content
-7. User can search based on tags
+6. Use can pull to refresh the content.
+7. User can search based on tags.
 8. All the images are being cached.
 9. All the publc photo feeds are also being stored locally in core data.
 
@@ -65,4 +65,7 @@ This code has been tested on iPhone XR, iPhone X & iPhone 6s.
 2. Able to zoom in the photo
 3. Able to see all photos posted by an author
 4. Allow the flicker tags clickable searchble over api.
+5. Update tag based searching locally, for all comma seaperated values, currently it searches complete string as a whole
+6. Make image caching robust (so in case of memory warnings we can clear out cache).
+7. Be able to use Swift’s Codable protocol to parse data automatically (its manual right now).
 
