@@ -10,9 +10,12 @@ import Foundation
 /** Public Photot Parameter creator */
 public struct PublicPhotosParameters {
     var params: [PublicPhotosParameterType: String]
-    init(format: String, noJsonCallback: String) {
+    init(format: String, noJsonCallback: String, tags: String?) {
         params = [:]
         params[.format] = format
         params[.noJsonCallback] = noJsonCallback
+        if let t = tags {
+            params[.tags] = t
+        }
     }
 }

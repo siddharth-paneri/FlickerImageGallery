@@ -21,12 +21,13 @@ class DataProvider: DataProviderProtocol {
         return result
     }
     // fetch records from Core data for given entity
-    func fetchRecords(for entity: String, sort: NSSortDescriptor?, with context: NSManagedObjectContext) -> [NSManagedObject] {
+    func fetchRecords(for entity: String, sort: NSSortDescriptor?, predicate: NSPredicate?, with context: NSManagedObjectContext) -> [NSManagedObject] {
         let fetchRequest = NSFetchRequest<NSFetchRequestResult>(entityName: entity)
                 var result = [NSManagedObject]()
         if let sortDescriptor = sort {
             fetchRequest.sortDescriptors = [sortDescriptor]
         }
+        fetchRequest.predicate = predicate
         do {
             // Execute Fetch Request
             let records = try context.fetch(fetchRequest)

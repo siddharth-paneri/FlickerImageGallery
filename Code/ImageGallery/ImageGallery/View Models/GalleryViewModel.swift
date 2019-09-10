@@ -25,11 +25,14 @@ class GalleryViewModel: GalleryViewModelProtocol {
         self.dataProvider.sortOrder = sortOrder
     }
     // reset the filter, part of GalleryViewModelProtocol
-    func resetFilter() {
+    func resetFilter(_ completion: @escaping () -> ()) {
         filteredViewModels = []
+        self.getAllPublicPhotosFromDB(with: nil) { (success) in
+            completion()
+        }
     }
     // filter using tag, part of GalleryViewModelProtocol
-    func filter(with tag: String) {
+    func filterLocally(with tag: String) {
         filteredViewModels = self.imageViewModels.filter({ (viewModel) -> Bool in
             return viewModel.getTags().contains(where: { (storedTag) -> Bool in
                 return storedTag.lowercased().contains(tag.lowercased())
@@ -38,19 +41,39 @@ class GalleryViewModel: GalleryViewModelProtocol {
         print(tag)
         print(filteredViewModels)
     }
+    func filteredFetch(with tags: String, _ completion: @escaping (NetworkError?)->()) {
+        self.getAllPublicPhotos(with: tags, { [weak self] (succsess, error) in
+            if error != nil {
+                completion(error)
+                return
+            }
+            guard let weakSelf = self else { return }
+            weakSelf.getAllPublicPhotosFromDB(with: tags, { (success) in
+                if success {
+                    completion(nil)
+                } else {
+                    completion(.noData)
+                }
+            })
+        })
+    }
     // get public photos from api and store in db, part of GalleryViewModelProtocol
-    func getAllPublicPhotos(_ completion: @escaping (Bool, NetworkError?)->()) {
-        dataProvider.fetchAllPublicPhotos(completion)
+    func getAllPublicPhotos(with tags: String?, _ completion: @escaping (Bool, NetworkError?)->()) {
+        dataProvider.fetchAllPublicPhotos(with: tags, completion)
     }
     // get public photos from DB, part of GalleryViewModelProtocol
-    func getAllPublicPhotosFromDB(_ completion: @escaping (Bool) -> ()) {
-        dataProvider.fetchAllPublicPhotosFromDBOnly { (imageDataModels) in
+    func getAllPublicPhotosFromDB(with tags: String?, _ completion: @escaping (Bool) -> ()) {
+        dataProvider.fetchAllPublicPhotosFromDBOnly(with: tags, { (imageDataModels) in
             let viewModels = imageDataModels.compactMap({ (imageDataModel) -> ImageDetailViewModel? in
                 return ImageDetailViewModel(with: imageDataModel)
             })
-            self.imageViewModels = viewModels
+            if  tags != nil {
+                self.filteredViewModels = viewModels
+            } else {
+                self.imageViewModels = viewModels
+            }
             completion(true)
-        }
+        })
     }
     // clear the cached images, part of GalleryViewModelProtocol
     func clearCache() {

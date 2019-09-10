@@ -79,7 +79,7 @@ class GalleryViewController: UIViewController {
         // setup collection view
         setupCollectionView()
         // get public photos from view model
-        getPublicPhotos()
+        getPublicPhotos(with: nil)
         // setup default view type
         viewType = .list
     }
@@ -180,22 +180,22 @@ class GalleryViewController: UIViewController {
         actionSheet.addAction(UIAlertAction(title: "Latest published", style: .default) { (action) in
             // date published chronological
             self.galleryViewModel.set(sortOrder: .oldestPublished)
-            self.getPublicPhotosFromDb()
+            self.getPublicPhotosFromDb(with: nil)
         })
         actionSheet.addAction(UIAlertAction(title: "Oldest published", style: .default) { (action) in
             // date published reverse chronological
             self.galleryViewModel.set(sortOrder: .latestPublished)
-            self.getPublicPhotosFromDb()
+            self.getPublicPhotosFromDb(with: nil)
         })
         actionSheet.addAction(UIAlertAction(title: "Latest taken", style: .default) { (action) in
             // date taken chronological
             self.galleryViewModel.set(sortOrder: .oldestTaken)
-            self.getPublicPhotosFromDb()
+            self.getPublicPhotosFromDb(with: nil)
         })
         actionSheet.addAction(UIAlertAction(title: "Oldest taken", style: .default) { (action) in
             // date taken reverse chronological
             self.galleryViewModel.set(sortOrder: .latestTaken)
-            self.getPublicPhotosFromDb()
+            self.getPublicPhotosFromDb(with: nil)
         })
         self.present(actionSheet, animated: true, completion: nil)
         
@@ -203,30 +203,30 @@ class GalleryViewController: UIViewController {
     /** This is an action for refresh control */
     @objc private func refreshControlValueDidChange() {
         if !isSearchActive {
-            self.getPublicPhotos()
+            self.getPublicPhotos(with: nil)
         }
     }
 }
 //MARK:- GalleryViewProtocol implementation
 extension GalleryViewController: GalleryViewProtocol {
     // this is an implementation of GalleryViewProtocol, which allows us to get public photos from view model and call api
-    func getPublicPhotos() {
+    func getPublicPhotos(with tags: String?) {
         DispatchQueue.main.async {
             self.collectionView.refreshControl?.beginRefreshing()
         }
-        self.galleryViewModel.getAllPublicPhotos { [weak self] (success, error) in
+        self.galleryViewModel.getAllPublicPhotos(with: tags, { [weak self] (success, error) in
             guard let weakSelf = self else { return }
             if let err = error {
                 // see error
                 print(err.localizedDescription)
                 weakSelf.show(error: error)
             }
-            weakSelf.getPublicPhotosFromDb()
-        }
+            weakSelf.getPublicPhotosFromDb(with: tags)
+        })
     }
     // this is an implementation of GalleryViewProtocol, which allows us to get public photos from db via view model
-    func getPublicPhotosFromDb() {
-        self.galleryViewModel.getAllPublicPhotosFromDB { [weak self] (success) in
+    func getPublicPhotosFromDb(with tags: String?) {
+        self.galleryViewModel.getAllPublicPhotosFromDB(with: tags, { [weak self] (success) in
             guard let weakSelf = self else { return }
             if !success {
                 // see error
@@ -236,7 +236,7 @@ extension GalleryViewController: GalleryViewProtocol {
                 weakSelf.collectionView.refreshControl?.endRefreshing()
                 weakSelf.collectionView.reloadData()
             }
-        }
+        })
     }
     // this is an implementation of GalleryViewProtocol, which allows us to show error to the user
     func show(error: NetworkError?) {
@@ -329,8 +329,12 @@ extension GalleryViewController: UISearchBarDelegate {
         if let searchText = searchBar.text {
             if !searchText.isEmpty {
                 // filter the cities based on search text
-                self.galleryViewModel.filter(with: searchText)
-                self.collectionView.reloadData()
+                self.galleryViewModel.filteredFetch(with: searchText) { (error) in
+                    if error != nil {
+                        self.show(error: error)
+                    }
+                    self.collectionView.reloadData()
+                }
             }
         }
         searchBar.resignFirstResponder()
@@ -340,9 +344,10 @@ extension GalleryViewController: UISearchBarDelegate {
         searchBar.text = ""
         searchBar.resignFirstResponder()
         // reeset filter
-        galleryViewModel.resetFilter()
-        isSearchActive = false
-        
+        galleryViewModel.resetFilter { [weak self] in
+            guard let weakSelf = self else { return }
+            weakSelf.isSearchActive = false
+        }
     }
 }
 //MARK:- PublicPhotoCellDelegate implementations

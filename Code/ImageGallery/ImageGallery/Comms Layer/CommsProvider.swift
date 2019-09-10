@@ -81,11 +81,11 @@ class CommsProvider: CommsProviderProtocol {
 }
 //MARK:- PublicPhotosAPIHandlerProtocol implemetation
 extension CommsProvider: PublicPhotosAPIHandlerProtocol {
-    func requestPublicPhotos(_ completion: @escaping (Data?, NetworkError?)->()) {
+    func requestPublicPhotos(with tag: String?, _ completion: @escaping (Data?, NetworkError?)->()) {
         // get the request URL
         let stringUrl = Constants.Feeds.publicPhotosBaseUrl
         // get the parameters and respective values
-        let parameters = PublicPhotosParameters(format: Constants.Parameters.responseFormat, noJsonCallback: Constants.Parameters.noAllowJsonCallback)
+        let parameters = PublicPhotosParameters(format: Constants.Parameters.responseFormat, noJsonCallback: Constants.Parameters.noAllowJsonCallback, tags: tag)
         // create url components to restructure the URL
         var urlComponents = URLComponents(string: stringUrl)
         urlComponents?.queryItems = parameters.params.map { URLQueryItem(name: $0.key.rawValue, value: $0.value)}

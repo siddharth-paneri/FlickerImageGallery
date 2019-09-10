@@ -31,6 +31,7 @@ public enum PublicPhotosSortOrder {
 enum PublicPhotosParameterType: String {
     case format = "format"
     case noJsonCallback = "nojsoncallback"
+    case tags = "tags"
 }
 
 

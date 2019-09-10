@@ -20,10 +20,11 @@ protocol DataProviderProtocol {
      This function should be implemented inside Data provider, and called when we need to fetch the records for given entity
      - Parameter entity: enity string for which record is to be created.
      - Parameter sort: sort descriptor object to sort the fetched data
+     - Parameter predicate: add predicate to filter out data
      - Parameter context: managed object context.
      - Returns: array of all NSManagedObjects
      */
-    func fetchRecords(for entity: String, sort: NSSortDescriptor?, with context: NSManagedObjectContext) -> [NSManagedObject]
+    func fetchRecords(for entity: String, sort: NSSortDescriptor?, predicate: NSPredicate?, with context: NSManagedObjectContext) -> [NSManagedObject]
     /**
      This function should be implemented inside Data provider, and called when we need to delete the records for given entity
      - Parameter entity: enity string for which record is to be created.
@@ -48,15 +49,17 @@ protocol PublicPhotoDataProvideProtocol: DataProviderProtocol {
     /**
      This function should be implemented inside Public photos data provider.
      Should be called when we need to fetch public photos from api
+     - Parameter tag: filter search result using tag.
      - Parameter completion: completion block returning success and NetworkError object.
      */
-    func fetchAllPublicPhotos(_ completion: @escaping (Bool, NetworkError?) -> ())
+    func fetchAllPublicPhotos(with tags: String?,_ completion: @escaping (Bool, NetworkError?) -> ())
     /**
      This function should be implemented inside Public photos data provider.
      Should be called when we need to fetch public photos from db only
+     - Parameter tag: filter search result using tag.
      - Parameter completion: completion block returning array of image data models
      */
-    func fetchAllPublicPhotosFromDBOnly(_ completion: @escaping ([ImageDataModel]) -> ())
+    func fetchAllPublicPhotosFromDBOnly( with tags: String?, _ completion: @escaping ([ImageDataModel]) -> ())
     /**
      This function should be implemented inside Public photos data provider.
      Should be called when we need delete all the photos from db

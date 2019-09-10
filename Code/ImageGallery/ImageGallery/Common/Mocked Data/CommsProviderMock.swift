@@ -43,9 +43,10 @@ class CommsProviderMock: CommsProviderProtocol, PublicPhotosAPIHandlerProtocol {
     }
     /**
      This method is used to request public photos.
+     - Parameter tags: filter using tags.
      - Parameter completion: completion block with Data and NetwrokError objects.
      */
-    func requestPublicPhotos(_ completion: @escaping (Data?, NetworkError?) -> ()) {
+    func requestPublicPhotos(with tag: String?, _ completion: @escaping (Data?, NetworkError?) -> ()) {
         if networkError != nil {
             completion(nil, networkError)
             return

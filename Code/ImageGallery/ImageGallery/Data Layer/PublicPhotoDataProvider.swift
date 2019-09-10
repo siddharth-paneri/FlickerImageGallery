@@ -20,9 +20,9 @@ class PublicPhotoDataProvider: DataProvider, PublicPhotoDataProvideProtocol {
         self.sortOrder = sortOrder
     }
     // method to fetch all public photos, part of PublicPhotoDataProvideProtocol
-    func fetchAllPublicPhotos(_ completion: @escaping (Bool, NetworkError?) -> ()) {
+    func fetchAllPublicPhotos(with tags: String?, _ completion: @escaping (Bool, NetworkError?) -> ()) {
         // perform request using PublicPhotosAPIHandlerProtocol object as a comms provider
-        self.commsProvider.requestPublicPhotos { (data, error) in
+        self.commsProvider.requestPublicPhotos(with: tags, { (data, error) in
             if error != nil {
                 // in future parse all error object to NetworkError objects
                 completion(false, NetworkError.serverFailed)
@@ -54,12 +54,12 @@ class PublicPhotoDataProvider: DataProvider, PublicPhotoDataProvideProtocol {
                 // return error
                 completion(false, NetworkError.jsonParseError)
             }
-        }
+        })
     }
     // fetch all public photos from DB, part of PublicPhotoDataProvideProtocol
-    func fetchAllPublicPhotosFromDBOnly(_ completion: @escaping ([ImageDataModel]) -> ()) {
+    func fetchAllPublicPhotosFromDBOnly(with tags: String?, _ completion: @escaping ([ImageDataModel]) -> ()) {
         // get image modes from DB
-        self.getImageModelsFromDb({ (models) in
+        self.getImageModelsFromDb(with: tags, { (models) in
             // return models
             completion(models)
         })
@@ -81,9 +81,9 @@ class PublicPhotoDataProvider: DataProvider, PublicPhotoDataProvideProtocol {
             // fetch context
             guard let managedContext = AppDelegate.fetchManagedObjectContext() else { return }
             // fetch image records
-            let imageRecords =  self.fetchRecords(for: "ImageEntity", sort: nil, with: managedContext) as? [ImageEntity]
+            let imageRecords =  self.fetchRecords(for: "ImageEntity", sort: nil, predicate: nil, with: managedContext) as? [ImageEntity]
             // fetch author records
-            let authorRecords =  self.fetchRecords(for: "AuthorEntity", sort: nil, with: managedContext) as? [AuthorEntity]
+            let authorRecords =  self.fetchRecords(for: "AuthorEntity", sort: nil, predicate: nil, with: managedContext) as? [AuthorEntity]
             for item in publicPhotoItems {
                 // create image entity empty object
                 var imageEntity: ImageEntity?
@@ -148,7 +148,7 @@ class PublicPhotoDataProvider: DataProvider, PublicPhotoDataProvideProtocol {
         }
     }
     // geth the stored image entities from db and convert them to image models
-    private func getImageModelsFromDb(_ completion: @escaping ([ImageDataModel])->()) {
+    private func getImageModelsFromDb(with tags: String?,_ completion: @escaping ([ImageDataModel])->()) {
         DispatchQueue.main.async {
             guard let managedContext = AppDelegate.fetchManagedObjectContext() else { return }
             var sortDescriptor: NSSortDescriptor?
@@ -164,7 +164,13 @@ class PublicPhotoDataProvider: DataProvider, PublicPhotoDataProvideProtocol {
                 sortDescriptor = NSSortDescriptor(key: #keyPath(ImageEntity.dateTaken), ascending: true)
             }
             // fetch data
-            guard let imageRecords =  self.fetchRecords(for: "ImageEntity", sort: sortDescriptor, with: managedContext) as? [ImageEntity] else {
+            var predicate: NSPredicate?
+            if let allTags = tags {
+                predicate = NSPredicate(format: "tags contains[c] %@", allTags)
+                
+            }
+            
+            guard let imageRecords =  self.fetchRecords(for: "ImageEntity", sort: sortDescriptor, predicate: predicate, with: managedContext) as? [ImageEntity] else {
                 completion([])
                 return
             }

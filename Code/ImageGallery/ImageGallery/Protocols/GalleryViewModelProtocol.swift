@@ -36,12 +36,20 @@ protocol GalleryViewModelProtocol {
      Should be used filter the data using given tag
      - Parameter tag: String object to be used for filtering
      */
-    func filter(with tag: String)
+    func filterLocally(with tag: String)
+    /**
+     This function should be implemented inside gallery view model.
+     Should be used filter the data using given tag
+     - Parameter tag: String object to be used for filtering
+     - Parameter completion: completion block with error object
+     */
+    func filteredFetch(with tags: String, _ completion: @escaping (NetworkError?)->())
     /**
      This function should be implemented inside gallery view model.
      Should be used reset all the filter
+     - Parameter completion: completion block
      */
-    func resetFilter()
+    func resetFilter(_ completion: @escaping ()->())
     /**
      This function should be implemented inside gallery view model.
      Should be used to clear cached data if any
@@ -50,13 +58,14 @@ protocol GalleryViewModelProtocol {
     /**
      This function should be implemented inside gallery view model.
      Should be used get all public photots from api
+     - Parameter tags: tags to filter data
      - Parameter completion: completion bloack that returns success and NetworkError object
      */
-    func getAllPublicPhotos(_ completion: @escaping (Bool, NetworkError?)->())
+    func getAllPublicPhotos(with tags: String?, _ completion: @escaping (Bool, NetworkError?)->())
     /**
      This function should be implemented inside gallery view model.
      Should be used get all public photots from DB
      - Parameter completion: completion bloack that returns success
      */
-    func getAllPublicPhotosFromDB(_ completion: @escaping (Bool)->())
+    func getAllPublicPhotosFromDB(with tags: String?, _ completion: @escaping (Bool)->())
 }

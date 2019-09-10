@@ -26,26 +26,26 @@ class PublicPhotoDataProviderTests: XCTestCase {
     }
     
     func testFetchAllPublicPhotos() {
-        publicPhotoProvider.fetchAllPublicPhotos { (recevied, error) in
+        publicPhotoProvider.fetchAllPublicPhotos(with: nil, { (recevied, error) in
             if !recevied {
                 XCTFail("Error in fetching data, test failed")
             }
-        }
+        })
     }
     
     func testErrorInFetchAllPublicPhotos() {
         commsProvier.networkError = .serverFailed
-        publicPhotoProvider.fetchAllPublicPhotos { (recevied, error) in
+        publicPhotoProvider.fetchAllPublicPhotos(with: nil, { (recevied, error) in
             if error == nil {
                 XCTFail("Did not receive error, test failed")
             }
-        }
+        })
     }
     
     func testFetchallPublicPhotosFromDB() {
-        publicPhotoProvider.fetchAllPublicPhotos { (recevied, error) in
+        publicPhotoProvider.fetchAllPublicPhotos(with: nil,  { (recevied, error) in
             if recevied {
-                self.publicPhotoProvider.fetchAllPublicPhotosFromDBOnly({ (imageDataModel) in
+                self.publicPhotoProvider.fetchAllPublicPhotosFromDBOnly(with: nil, { (imageDataModel) in
                     if imageDataModel.count == 0 {
                         XCTFail("No data avialeble, test failed")
                     }
@@ -53,8 +53,7 @@ class PublicPhotoDataProviderTests: XCTestCase {
             } else {
                 XCTFail("Error in fetching data, test failed")
             }
-            
-        }
+        })
     }
 
 }

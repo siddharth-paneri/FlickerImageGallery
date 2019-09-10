@@ -11,7 +11,8 @@ import Foundation
 public protocol PublicPhotosAPIHandlerProtocol {
     /**
      This method is to get public photos.
+     - Parameter tag: filter search result using tag.
      - Parameter completion: completion block with Data and NetwrokError objects.
      */
-    func requestPublicPhotos(_ completion: @escaping (Data?, NetworkError?)->())
+    func requestPublicPhotos(with tag: String?, _ completion: @escaping (Data?, NetworkError?)->())
 }
