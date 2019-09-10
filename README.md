@@ -32,9 +32,14 @@ Good example of libraries that could be used are RxSwift, RxJava etc.
 https://jsonplaceholder.typicode.com/
 ```
 
-## App architecture
-<!-- <img src = "https://github.com/siddharth-paneri/FlickerImageGallery/blob/master/Media/Architecture.png"/> -->
+## App's generic architecture
+<img src = "https://github.com/siddharth-paneri/FlickerImageGallery/blob/master/Media/Architecture.jpg"/>
 
+## Design patterns & programming concepts used
+1. MVVM (Model-View-View-Model)
+2. Protocol oriented programming
+3. Singleton patter
+4. Dependency injection
 
 ## Features implemented
 1. Fetch all the public photos from Flicker api
@@ -48,7 +53,7 @@ https://jsonplaceholder.typicode.com/
 9. All the publc photo feeds are also being stored locally in core data.
 
 
-## App screenshots -
+## App screenshots
 <img src = "https://github.com/siddharth-paneri/FlickerImageGallery/blob/master/Media/IMG_1.png" width="200"/>    <img src = "https://github.com/siddharth-paneri/FlickerImageGallery/blob/master/Media/IMG_2.png" width="200"/>    <img src = "https://github.com/siddharth-paneri/FlickerImageGallery/blob/master/Media/IMG_3.png" width="200"/>    <img src = "https://github.com/siddharth-paneri/FlickerImageGallery/blob/master/Media/IMG_4.png" width="200"/>    <img src = "https://github.com/siddharth-paneri/FlickerImageGallery/blob/master/Media/IMG_5.png" width="200"/>    <img src = "https://github.com/siddharth-paneri/FlickerImageGallery/blob/master/Media/IMG_6.png" width="200"/>    <img src = "https://github.com/siddharth-paneri/FlickerImageGallery/blob/master/Media/IMG_7.png" width="200"/>
  
 
